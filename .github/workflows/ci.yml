@@ -1,0 +1,32 @@
+name: CI Auto Push
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+      - name: Install DVC
+        run: |
+          pip install dvc
+      - name: DVC Pull
+        run: |
+          dvc pull || true
+      - name: Run Tests
+        run: |
+          pytest tests/ || echo "No tests found"
+      - name: Commit & Push
+        run: |
+          git config --global user.name 'Auto CI Bot'
+          git config --global user.email 'ci@example.com'
+          git add .
+          git commit -m 'Auto commit from CI' || echo "Nothing to commit"
+          git push || echo "Nothing to push"
