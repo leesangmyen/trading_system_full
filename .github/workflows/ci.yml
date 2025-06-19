@@ -10,19 +10,25 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.x'
-      - name: Install DVC
+
+      - name: Install Dependencies
         run: |
           pip install dvc
+          pip install pytest
+
       - name: DVC Pull
         run: |
           dvc pull || true
+
       - name: Run Tests
         run: |
           pytest tests/ || echo "No tests found"
+
       - name: Commit & Push
         run: |
           git config --global user.name 'Auto CI Bot'
